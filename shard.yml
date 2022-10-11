@@ -1,0 +1,17 @@
+name: private-drivers
+version: 1.3.0
+crystal: ~> 1
+
+# Add your driver dependencies here.
+dependencies:
+  # Required for compiling and testing PlaceOS drivers
+  placeos-driver:
+    github: placeos/driver
+
+  # Feel free to remove this dependency. Used for testing,
+  base62:
+    github: Sija/base62.cr
+
+development_dependencies:
+  ameba:
+    github: crystal-ameba/ameba
