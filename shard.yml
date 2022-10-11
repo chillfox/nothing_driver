@@ -9,8 +9,8 @@ dependencies:
     github: placeos/driver
 
   # Feel free to remove this dependency. Used for testing,
-  base62:
-    github: Sija/base62.cr
+  # base62:
+  #   github: Sija/base62.cr
 
 development_dependencies:
   ameba:
