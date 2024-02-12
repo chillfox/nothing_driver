@@ -4,7 +4,7 @@ class Nothing < PlaceOS::Driver
   generic_name :Nothing
   descriptive_name "Driver that does nothing"
   default_settings({
-    do_something: true,
+    do_something: false,
   })
 
   def on_load
