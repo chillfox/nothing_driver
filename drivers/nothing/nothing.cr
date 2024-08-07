@@ -1,10 +1,10 @@
 require "placeos-driver"
 
-# This driver is for testing stuff...
-
 class Nothing < PlaceOS::Driver
   generic_name :Nothing
   descriptive_name "Driver that does nothing"
+  description %(Test driver for testing stuff)
+
   default_settings({
     do_something: false,
   })
@@ -19,7 +19,7 @@ class Nothing < PlaceOS::Driver
     logger.info { "Nothing #on_update" }
 
     @do_something = setting?(Bool, :do_something) || false
-    schedule.every(5.minutes) { pretend_to_do_something } if do_something
+    schedule.every(5.minutes) { pretend_to_do_something } if @do_something
   end
 
   def on_unload
@@ -39,7 +39,7 @@ class Nothing < PlaceOS::Driver
   end
 
   # Test methods
-  def get_system_zones
+  def system_zones
     system.zones
   end
 end
