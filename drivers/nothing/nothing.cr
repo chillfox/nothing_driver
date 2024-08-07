@@ -1,5 +1,7 @@
 require "placeos-driver"
 
+# This driver is for testing stuff...
+
 class Nothing < PlaceOS::Driver
   generic_name :Nothing
   descriptive_name "Driver that does nothing"
