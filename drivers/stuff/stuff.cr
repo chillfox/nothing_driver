@@ -64,4 +64,32 @@ class Stuff < PlaceOS::Driver
     logger.warn(exception: error) { "unable to determine building zone" }
     nil
   end
+
+  struct Zone
+    include JSON::Serializable
+
+    property id : String
+
+    property name : String
+    property description : String
+    property tags : Set(String)
+    property location : String?
+    property display_name : String?
+    property timezone : String?
+
+    property parent_id : String?
+
+    @[JSON::Field(ignore: true)]
+    @time_location : Time::Location?
+
+    def time_location? : Time::Location?
+      if tz = timezone.presence
+        @time_location ||= Time::Location.load(tz)
+      end
+    end
+
+    def time_location! : Time::Location
+      time_location?.not_nil!
+    end
+  end
 end
