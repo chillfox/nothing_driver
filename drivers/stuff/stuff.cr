@@ -66,11 +66,11 @@ class Stuff < PlaceOS::Driver
   end
 
   def get_email_template_fields
-    staff_api.metadata(building_zone.id, "email_template_fields").get
+    staff_api.metadata(org_zone.id, "email_template_fields").get
   end
 
   def get_email_templates
-    staff_api.metadata(building_zone.id, "email_templates").get
+    staff_api.metadata(org_zone.id, "email_templates").get
   end
 
   struct Zone
