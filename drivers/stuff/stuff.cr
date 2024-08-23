@@ -70,6 +70,14 @@ class Stuff < PlaceOS::Driver
     Hash(String, TemplateFields).from_json metadata.details.to_json
   end
 
+  def update_email_template_fields()
+    # template_fields : Hash(String, TemplateFields)
+    template_fields = get_email_template_fields
+    
+    # write_metadata(id : String, key : String, payload : JSON::Any, description : String = "")
+    staff_api.write_metadata(id: org_zone.id, key: "email_template_fields_test", payload: template_fields, description: "Available fields for use in email templates").get
+  end
+
   # def get_email_templates
   #   staff_api.metadata(org_zone.id, "email_templates").get
   # end
