@@ -66,11 +66,11 @@ class Stuff < PlaceOS::Driver
   end
 
   def get_email_template_fields
-    Metadata.from_json staff_api.metadata(building_zone.id, "email_template_fields").get["email_template_fields"].to_json
+    staff_api.metadata(building_zone.id, "email_template_fields").get
   end
 
   def get_email_templates
-    Metadata.from_json staff_api.metadata(building_zone.id, "email_templates").get["email_templates"].to_json
+    staff_api.metadata(building_zone.id, "email_templates").get
   end
 
   struct Zone
@@ -139,23 +139,11 @@ class Stuff < PlaceOS::Driver
     property modified_by_id : String? = nil
   end
 
-  # struct EmailTemplateFields
-  #   include JSON::Serializable
+  record TemplateFields, name : String, fields : Array(TemplateField) do
+    include JSON::Serializable
+  end
 
-  #   property templates : Hash(String, Template)
-
-  #   struct Template
-  #     include JSON::Serializable
-  
-  #     property name : String
-  #     property fields : Array(Field)
-  #   end
-
-  #   struct Field
-  #     include JSON::Serializable
-  
-  #     property name : String
-  #     property description : String
-  #   end
-  # end
+  record TemplateField, name : String, description : String do
+    include JSON::Serializable
+  end
 end
