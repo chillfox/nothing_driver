@@ -66,7 +66,7 @@ class Stuff < PlaceOS::Driver
   end
 
   def get_email_template_fields
-    staff_api.metadata(org_zone.id, "email_template_fields").get
+    Hash(String, TemplateFields).from_json staff_api.metadata(org_zone.id, "email_template_fields").get["email_template_fields"].to_json
   end
 
   def get_email_templates
