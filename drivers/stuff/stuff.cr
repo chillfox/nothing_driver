@@ -26,7 +26,7 @@ class Stuff < PlaceOS::Driver
     logger.info { "Stuff #on_update" } if @log_lifecycle_hooks
 
     @log_lifecycle_hooks = setting?(Bool, :log_lifecycle_hooks) || false
-    
+
     @org_zone = nil
     @building_zone = nil
   end
@@ -121,9 +121,9 @@ class Stuff < PlaceOS::Driver
   #                 ]
   #             }
   #         },
-  #         "parent_id": "zone-DnTc8chjVb",
+  #         "parent_id": "zone-1234",
   #         "editors": [],
-  #         "modified_by_id": "user-C2KyPySJYghf6g"
+  #         "modified_by_id": "user-1234"
   #     }
   # }
 
