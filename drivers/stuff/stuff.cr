@@ -65,6 +65,14 @@ class Stuff < PlaceOS::Driver
     nil
   end
 
+  def get_email_template_fields
+    Metadata.from_json staff_api.metadata(building_zone.id, "email_template_fields")
+  end
+
+  def get_email_templates
+    Metadata.from_json staff_api.metadata(building_zone.id, "email_templates")
+  end
+
   struct Zone
     include JSON::Serializable
 
@@ -75,6 +83,11 @@ class Stuff < PlaceOS::Driver
     property tags : Set(String)
     property location : String?
     property display_name : String?
+    property code : String?
+    property type : String?
+    property count : Int32 = 0
+    property capacity : Int32 = 0
+    property map_id : String?
     property timezone : String?
 
     property parent_id : String?
@@ -91,5 +104,38 @@ class Stuff < PlaceOS::Driver
     def time_location! : Time::Location
       time_location?.not_nil!
     end
+  end
+
+  # {
+  #     "email_template_fields": {
+  #         "name": "email_template_fields",
+  #         "description": "",
+  #         "details": {
+  #             "template_name_key": {
+  #                 "name": "Visitor Invite",
+  #                 "fields": [
+  #                     {
+  #                         "name": "building_name",
+  #                         "description": "the name of the building"
+  #                     }
+  #                 ]
+  #             }
+  #         },
+  #         "parent_id": "zone-DnTc8chjVb",
+  #         "editors": [],
+  #         "modified_by_id": "user-C2KyPySJYghf6g"
+  #     }
+  # }
+
+  struct Metadata
+    include JSON::Serializable
+
+    property name : String
+    property description : String = ""
+    property details : JSON::Any
+    property parent_id : String
+    property schema_id : String? = nil
+    property editors : Set(String) = Set(String).new
+    property modified_by_id : String? = nil
   end
 end
