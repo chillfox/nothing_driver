@@ -65,13 +65,13 @@ class Stuff < PlaceOS::Driver
     nil
   end
 
-  def get_email_template_fields
-    Hash(String, TemplateFields).from_json staff_api.metadata(org_zone.id, "email_template_fields").get["email_template_fields"].to_json
+  def get_email_template_fields : Hash(String, TemplateFields)
+    Hash(String, TemplateFields).from_json staff_api.metadata(org_zone.id, "email_template_fields").get.to_json
   end
 
-  def get_email_templates
-    staff_api.metadata(org_zone.id, "email_templates").get
-  end
+  # def get_email_templates
+  #   staff_api.metadata(org_zone.id, "email_templates").get
+  # end
 
   struct Zone
     include JSON::Serializable
