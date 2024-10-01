@@ -94,6 +94,13 @@ class Stuff < PlaceOS::Driver
     nil
   end
 
+  def get_email_templates_on_building_zone
+    staff_api.metadata(building_zone.id, "email_templates").get
+  rescue error
+    logger.warn(exception: error) { "unable to get email templates" }
+    nil
+  end
+
   struct Zone
     include JSON::Serializable
 
