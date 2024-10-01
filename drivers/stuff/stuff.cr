@@ -101,9 +101,9 @@ class Stuff < PlaceOS::Driver
     nil
   end
 
-  def get_email_templates?(zone_id : String = building_zone.id) : Array(EmailTemplate)?
+  def get_email_templates?(zone_id : String) : Array(EmailTemplate)?
     metadata = Metadata.from_json staff_api.metadata(zone_id, "email_templates").get["email_templates"].to_json
-    metadata.details.map(&.as(EmailTemplate))
+    metadata.details.as_a.map { |template| EmailTemplate.from_json template.to_json }
   rescue error
     logger.warn(exception: error) { "unable to get email templates from zone #{zone_id} metadata" }
     nil
