@@ -87,9 +87,12 @@ class Stuff < PlaceOS::Driver
     staff_api.write_metadata(id: org_zone.id, key: "email_template_fields_test", payload: template_fields, description: "Available fields for use in email templates").get
   end
 
-  # def get_email_templates
-  #   staff_api.metadata(org_zone.id, "email_templates").get
-  # end
+  def get_email_templates
+    staff_api.metadata(org_zone.id, "email_templates").get
+  rescue error
+    logger.warn(exception: error) { "unable to get email templates" }
+    nil
+  end
 
   struct Zone
     include JSON::Serializable
