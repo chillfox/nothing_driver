@@ -142,27 +142,6 @@ class Stuff < PlaceOS::Driver
     end
   end
 
-  # {
-  #     "email_template_fields": {
-  #         "name": "email_template_fields",
-  #         "description": "",
-  #         "details": {
-  #             "template_name_key": {
-  #                 "name": "Visitor Invite",
-  #                 "fields": [
-  #                     {
-  #                         "name": "building_name",
-  #                         "description": "the name of the building"
-  #                     }
-  #                 ]
-  #             }
-  #         },
-  #         "parent_id": "zone-1234",
-  #         "editors": [],
-  #         "modified_by_id": "user-1234"
-  #     }
-  # }
-
   struct Metadata
     include JSON::Serializable
 
@@ -185,7 +164,7 @@ class Stuff < PlaceOS::Driver
 
   struct EmailTemplate
     include JSON::Serializable
-  
+
     # property id : String
     # property from : String
     # property html : String
