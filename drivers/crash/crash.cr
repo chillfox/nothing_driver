@@ -77,9 +77,9 @@ class Crash < PlaceOS::Driver
   end
 
   def crash(on : String = "?")
-    logger.info { "delaying crash for #{@crash_delay} seconds" }
-    sleep(@crash_delay)
     logger.fatal { "Crashing! on #{on}" }
+    logger.info { "delaying crash for #{@crash_delay} seconds" } if @crash_delay > 0
+    sleep(@crash_delay)
     raise "Crash! on #{on}"
   end
 end
