@@ -30,8 +30,9 @@ class Crash < PlaceOS::Driver
   def on_load
     logger.info { "Stuff #on_load" } if @log_lifecycle_hooks
 
-    crash("load") if @crash_on_load
     on_update
+    
+    crash("load") if @crash_on_load
   end
 
   def on_update
