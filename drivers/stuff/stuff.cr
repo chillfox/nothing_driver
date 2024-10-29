@@ -1,7 +1,10 @@
 require "placeos-driver"
 require "placeos-driver/interface/mailer"
+require "placeos-driver/interface/mailer_templates"
 
 class Stuff < PlaceOS::Driver
+  include PlaceOS::Driver::Interface::MailerTemplates
+
   generic_name :Stuff
   descriptive_name "Driver that does stuff"
   description %(Test driver for testing utility functions)
@@ -75,40 +78,40 @@ class Stuff < PlaceOS::Driver
     nil
   end
 
-  def get_email_template_fields : Hash(String, TemplateFields)
-    metadata = Metadata.from_json staff_api.metadata(org_zone.id, "email_template_fields").get["email_template_fields"].to_json
-    Hash(String, TemplateFields).from_json metadata.details.to_json
-  end
+  # def get_email_template_fields : Hash(String, TemplateFields)
+  #   metadata = Metadata.from_json staff_api.metadata(org_zone.id, "email_template_fields").get["email_template_fields"].to_json
+  #   Hash(String, TemplateFields).from_json metadata.details.to_json
+  # end
 
-  def update_email_template_fields
-    # template_fields : Hash(String, TemplateFields)
-    template_fields = get_email_template_fields
+  # def update_email_template_fields
+  #   # template_fields : Hash(String, TemplateFields)
+  #   template_fields = get_email_template_fields
 
-    # write_metadata(id : String, key : String, payload : JSON::Any, description : String = "")
-    staff_api.write_metadata(id: org_zone.id, key: "email_template_fields_test", payload: template_fields, description: "Available fields for use in email templates").get
-  end
+  #   # write_metadata(id : String, key : String, payload : JSON::Any, description : String = "")
+  #   staff_api.write_metadata(id: org_zone.id, key: "email_template_fields_test", payload: template_fields, description: "Available fields for use in email templates").get
+  # end
 
-  def get_email_templates_on_org_zone?
-    staff_api.metadata(org_zone.id, "email_templates").get
-  rescue error
-    logger.warn(exception: error) { "unable to get email templates" }
-    nil
-  end
+  # def get_email_templates_on_org_zone?
+  #   staff_api.metadata(org_zone.id, "email_templates").get
+  # rescue error
+  #   logger.warn(exception: error) { "unable to get email templates" }
+  #   nil
+  # end
 
-  def get_email_templates_on_building_zone
-    staff_api.metadata(building_zone.id, "email_templates").get
-  rescue error
-    logger.warn(exception: error) { "unable to get email templates" }
-    nil
-  end
+  # def get_email_templates_on_building_zone
+  #   staff_api.metadata(building_zone.id, "email_templates").get
+  # rescue error
+  #   logger.warn(exception: error) { "unable to get email templates" }
+  #   nil
+  # end
 
-  def get_email_templates?(zone_id : String) : Array(EmailTemplate)?
-    metadata = Metadata.from_json staff_api.metadata(zone_id, "email_templates").get["email_templates"].to_json
-    metadata.details.as_a.map { |template| EmailTemplate.from_json template.to_json }
-  rescue error
-    logger.warn(exception: error) { "unable to get email templates from zone #{zone_id} metadata" }
-    nil
-  end
+  # def get_email_templates?(zone_id : String) : Array(EmailTemplate)?
+  #   metadata = Metadata.from_json staff_api.metadata(zone_id, "email_templates").get["email_templates"].to_json
+  #   metadata.details.as_a.map { |template| EmailTemplate.from_json template.to_json }
+  # rescue error
+  #   logger.warn(exception: error) { "unable to get email templates from zone #{zone_id} metadata" }
+  #   nil
+  # end
 
   def list_mailer_drivers
     mailers = system.implementing(Interface::Mailer)
@@ -116,6 +119,8 @@ class Stuff < PlaceOS::Driver
     mailers.map { |mailer| mailer.module_name }
   end
 
+  SEPERATOR = "."
+  
   def find_template_fields
     template_fields : Hash(String, MetadataTemplateFields) = Hash(String, MetadataTemplateFields).new
 
@@ -133,6 +138,10 @@ class Stuff < PlaceOS::Driver
     end
 
     self[:template_fields] = template_fields
+  end
+
+  def template_fields : Array(TemplateFields)
+    [] of TemplateFields
   end
 
   struct Zone
@@ -180,12 +189,29 @@ class Stuff < PlaceOS::Driver
     property modified_by_id : String? = nil
   end
 
-  record TemplateFields, name : String, fields : Array(TemplateField) do
-    include JSON::Serializable
-  end
+  # record TemplateFields, name : String, fields : Array(TemplateField) do
+  #   include JSON::Serializable
+  # end
 
-  record TemplateField, name : String, description : String do
+  # record TemplateField, name : String, description : String do
+  #   include JSON::Serializable
+  # end
+
+  struct MetadataTemplateFields
     include JSON::Serializable
+
+    property module_name : String = ""
+    property name : String = ""
+    property description : String? = nil
+    property fields : Array(NamedTuple(name: String, description: String)) = [] of NamedTuple(name: String, description: String)
+
+    def initialize(
+      @module_name : String,
+      @name : String,
+      @description : String? = nil,
+      @fields : Array(NamedTuple(name: String, description: String)) = [] of NamedTuple(name: String, description: String)
+    )
+    end
   end
 
   struct EmailTemplate
