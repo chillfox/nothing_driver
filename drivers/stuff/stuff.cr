@@ -1,4 +1,5 @@
 require "placeos-driver"
+require "placeos-driver/interface/mailer"
 
 class Stuff < PlaceOS::Driver
   generic_name :Stuff
@@ -116,9 +117,9 @@ class Stuff < PlaceOS::Driver
   def get_driver_info
     driver = system.implementing(Interface::Mailer)
     {
-      generic_name: driver.generic_name,
-      descriptive_name: driver.descriptive_name,
-      description: driver.description,
+      generic_name: driver.generic_name.to_s,
+      descriptive_name: driver.descriptive_name.to_s,
+      description: driver.description.to_s,
     }
   end
 
