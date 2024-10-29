@@ -120,13 +120,19 @@ class Stuff < PlaceOS::Driver
   end
 
   SEPERATOR = "."
-  
+
   def find_template_fields
     template_fields : Hash(String, MetadataTemplateFields) = Hash(String, MetadataTemplateFields).new
 
     system.implementing(Interface::MailerTemplates).each do |driver|
       # TODO: next if the driver is not turned on
-      driver_template_fields = Array(TemplateFields).from_json driver.template_fields.get.to_json
+      begin
+        driver_template_fields = Array(TemplateFields).from_json driver.template_fields.get.to_json
+      rescue error
+        logger.warn(exception: error) { "unable to get email template fields from driver" }
+        logger.warn { "Skipping module #{driver.id}" }
+        next
+      end
       driver_template_fields.each do |field_list|
         template_fields["#{field_list[:trigger].join(SEPERATOR)}"] = MetadataTemplateFields.new(
           module_name: driver.module_name,
