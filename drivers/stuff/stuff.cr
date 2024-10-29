@@ -110,17 +110,15 @@ class Stuff < PlaceOS::Driver
     nil
   end
 
-  def get_driver
-    system.implementing(Interface::Mailer)
-  end
-
   def get_driver_info
-    driver = system.implementing(Interface::Mailer)
-    {
-      generic_name: driver.generic_name.to_s,
-      descriptive_name: driver.descriptive_name.to_s,
-      description: driver.description.to_s,
-    }
+    drivers = system.implementing(Interface::Mailer)
+    drivers.map do |driver|
+      {
+        generic_name: driver[:generic_name]?,
+        descriptive_name: driver[:descriptive_name]?,
+        description: driver[:description]?,
+      }
+    end
   end
 
   struct Zone
