@@ -11,7 +11,6 @@ class Stuff < PlaceOS::Driver
   })
 
   accessor staff_api : StaffAPI_1
-  # accessor mailers, implementing: Interface::Mailer
 
   getter org_zone : Zone { get_org_zone?.not_nil! }
   getter building_zone : Zone { get_building_zone?.not_nil! }
@@ -114,10 +113,26 @@ class Stuff < PlaceOS::Driver
   def list_mailer_drivers
     mailers = system.implementing(Interface::Mailer)
     logger.info { "Found #{mailers.size} mailer drivers" }
-    mailers.each do |mailer|
-      logger.info { "Mailer: #{mailer.name}" }
-    end
     mailers.map { |mailer| mailer.module_name }
+  end
+
+  def find_template_fields
+    template_fields : Hash(String, MetadataTemplateFields) = Hash(String, MetadataTemplateFields).new
+
+    system.implementing(Interface::MailerTemplates).each do |driver|
+      # TODO: next if the driver is not turned on
+      driver_template_fields = Array(TemplateFields).from_json driver.template_fields.get.to_json
+      driver_template_fields.each do |field_list|
+        template_fields["#{field_list[:trigger].join(SEPERATOR)}"] = MetadataTemplateFields.new(
+          module_name: driver.module_name,
+          name: "#{driver.module_name}: #{field_list[:name]}",
+          description: field_list[:description],
+          fields: field_list[:fields],
+        )
+      end
+    end
+
+    self[:template_fields] = template_fields
   end
 
   struct Zone
