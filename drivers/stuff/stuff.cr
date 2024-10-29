@@ -109,6 +109,19 @@ class Stuff < PlaceOS::Driver
     nil
   end
 
+  def get_driver
+    system.implementing(Interface::Mailer)
+  end
+
+  def get_driver_info
+    driver = system.implementing(Interface::Mailer)
+    {
+      generic_name: driver.generic_name,
+      descriptive_name: driver.descriptive_name,
+      description: driver.description,
+    }
+  end
+
   struct Zone
     include JSON::Serializable
 
