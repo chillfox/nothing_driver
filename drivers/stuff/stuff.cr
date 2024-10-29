@@ -11,6 +11,7 @@ class Stuff < PlaceOS::Driver
   })
 
   accessor staff_api : StaffAPI_1
+  # accessor mailers, implementing: Interface::Mailer
 
   getter org_zone : Zone { get_org_zone?.not_nil! }
   getter building_zone : Zone { get_building_zone?.not_nil! }
@@ -110,15 +111,13 @@ class Stuff < PlaceOS::Driver
     nil
   end
 
-  def get_driver_info
-    drivers = system.implementing(Interface::Mailer)
-    drivers.map do |driver|
-      {
-        generic_name: driver[:generic_name]?,
-        descriptive_name: driver[:descriptive_name]?,
-        description: driver[:description]?,
-      }
+  def list_mailer_drivers
+    mailers = system.implementing(Interface::Mailer)
+    logger.info { "Found #{mailers.size} mailer drivers" }
+    mailers.each do |mailer|
+      logger.info { "Mailer: #{mailer.name}" }
     end
+    mailers.map { |mailer| mailer.module_name }
   end
 
   struct Zone
