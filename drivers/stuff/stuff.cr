@@ -105,13 +105,13 @@ class Stuff < PlaceOS::Driver
   #   nil
   # end
 
-  # def get_email_templates?(zone_id : String) : Array(EmailTemplate)?
-  #   metadata = Metadata.from_json staff_api.metadata(zone_id, "email_templates").get["email_templates"].to_json
-  #   metadata.details.as_a.map { |template| EmailTemplate.from_json template.to_json }
-  # rescue error
-  #   logger.warn(exception: error) { "unable to get email templates from zone #{zone_id} metadata" }
-  #   nil
-  # end
+  def get_email_templates?(zone_id : String) : Array(EmailTemplate)?
+    metadata = Metadata.from_json staff_api.metadata(zone_id, "email_templates").get["email_templates"].to_json
+    metadata.details.as_a.map { |template| EmailTemplate.from_json template.to_json }
+  rescue error
+    logger.warn(exception: error) { "unable to get email templates from zone #{zone_id} metadata" }
+    nil
+  end
 
   def list_mailer_drivers
     mailers = system.implementing(Interface::Mailer)
@@ -125,11 +125,10 @@ class Stuff < PlaceOS::Driver
     template_fields : Hash(String, MetadataTemplateFields) = Hash(String, MetadataTemplateFields).new
 
     system.implementing(Interface::MailerTemplates).each do |driver|
-      # TODO: next if the driver is not turned on
       begin
         driver_template_fields = Array(TemplateFields).from_json driver.template_fields.get.to_json
       rescue error
-        logger.warn(exception: error) { "unable to get email template fields from module #{driver.module_id}" }
+        logger.warn { "unable to get email template fields from module #{driver.module_id}" }
         next
       end
 
@@ -220,19 +219,21 @@ class Stuff < PlaceOS::Driver
     end
   end
 
-  struct EmailTemplate
-    include JSON::Serializable
+  alias EmailTemplate = Hash(String, String | Int64)
 
-    # property id : String
-    # property from : String
-    # property html : String
-    property text : String
-    property subject : String
-    # property trigger : String
-    # property zone_id : String
-    # property category : String
-    # property reply_to : String
-    # property created_at : Int64
-    # property updated_at : Int64
-  end
+  # struct EmailTemplate
+  #   include JSON::Serializable
+
+  #   # property id : String
+  #   # property from : String
+  #   # property html : String
+  #   property text : String
+  #   property subject : String
+  #   # property trigger : String
+  #   # property zone_id : String
+  #   # property category : String
+  #   # property reply_to : String
+  #   # property created_at : Int64
+  #   # property updated_at : Int64
+  # end
 end
