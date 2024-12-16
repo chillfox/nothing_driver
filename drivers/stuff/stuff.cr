@@ -78,34 +78,16 @@ class Stuff < PlaceOS::Driver
     nil
   end
 
-  # def get_email_template_fields : Hash(String, TemplateFields)
-  #   metadata = Metadata.from_json staff_api.metadata(org_zone.id, "email_template_fields").get["email_template_fields"].to_json
-  #   Hash(String, TemplateFields).from_json metadata.details.to_json
-  # end
+  def get_email_templates_on_org_zone?
+    get_templates?(org_zone.id)
+  end
 
-  # def update_email_template_fields
-  #   # template_fields : Hash(String, TemplateFields)
-  #   template_fields = get_email_template_fields
-
-  #   # write_metadata(id : String, key : String, payload : JSON::Any, description : String = "")
-  #   staff_api.write_metadata(id: org_zone.id, key: "email_template_fields_test", payload: template_fields, description: "Available fields for use in email templates").get
-  # end
-
-  # def get_email_templates_on_org_zone?
-  #   staff_api.metadata(org_zone.id, "email_templates").get
-  # rescue error
-  #   logger.warn(exception: error) { "unable to get email templates" }
-  #   nil
-  # end
-
-  # def get_email_templates_on_building_zone
-  #   staff_api.metadata(building_zone.id, "email_templates").get
-  # rescue error
-  #   logger.warn(exception: error) { "unable to get email templates" }
-  #   nil
-  # end
-
-  def get_email_templates?(zone_id : String) : Array(EmailTemplate)?
+  def get_email_templates_on_building_zone
+    get_templates?(building_zone.id)
+  end
+  
+  # get templates from metadata
+  def get_templates?(zone_id : String) : Array(EmailTemplate)?
     metadata = Metadata.from_json staff_api.metadata(zone_id, "email_templates").get["email_templates"].to_json
     metadata.details.as_a.map { |template| EmailTemplate.from_json template.to_json }
   rescue error
@@ -148,6 +130,8 @@ class Stuff < PlaceOS::Driver
   def template_fields : Array(TemplateFields)
     [] of TemplateFields
   end
+
+  alias EmailTemplate = Hash(String, String | Int64)
 
   struct Zone
     include JSON::Serializable
@@ -194,14 +178,6 @@ class Stuff < PlaceOS::Driver
     property modified_by_id : String? = nil
   end
 
-  # record TemplateFields, name : String, fields : Array(TemplateField) do
-  #   include JSON::Serializable
-  # end
-
-  # record TemplateField, name : String, description : String do
-  #   include JSON::Serializable
-  # end
-
   struct MetadataTemplateFields
     include JSON::Serializable
 
@@ -218,22 +194,4 @@ class Stuff < PlaceOS::Driver
     )
     end
   end
-
-  alias EmailTemplate = Hash(String, String | Int64)
-
-  # struct EmailTemplate
-  #   include JSON::Serializable
-
-  #   # property id : String
-  #   # property from : String
-  #   # property html : String
-  #   property text : String
-  #   property subject : String
-  #   # property trigger : String
-  #   # property zone_id : String
-  #   # property category : String
-  #   # property reply_to : String
-  #   # property created_at : Int64
-  #   # property updated_at : Int64
-  # end
 end
